@@ -172,15 +172,15 @@ self-hosted by Next.js at build time. The sample customer details are fictional.
 This rebuild was made with **[Claude Code](https://claude.com/claude-code)**, Anthropic's AI coding
 assistant, as a pair programmer.
 
-- **Who did what.** The author decided what to rebuild and how it should work and look. Claude
+- **Who did what:** the author decided what to rebuild and how it should work and look. Claude
   ported the JSP pages to Next.js, wrote the database layer and the rest of the new code, and
   tested it.
-- **How it was checked.** Every page and form was driven end to end in a real browser: browsing,
+- **How it was checked:** every page and form was driven end to end in a real browser: browsing,
   search, adding to and changing the cart, a failed and a successful login, placing an order,
   shipping it as admin and confirming the stock went down, and a non-admin being refused the
   Admin page. This ran against both the in-memory database and a real Postgres connection, plus
   type checks, lint and a production build.
-- **Know the limits.** It's a portfolio demo, not an audited shop: there are no payments, and the
+- **Know the limits:** it's a portfolio demo, not an audited shop: there are no payments, and the
   sample accounts' passwords are public on purpose.
 
 ## Acknowledgements

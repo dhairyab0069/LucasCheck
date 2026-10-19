@@ -191,7 +191,7 @@ Lucas-Check started as the term project for **COSC 304 (Introduction to Database
 - **Dhairya Bhatia**
 - **Jay Bhullar**
 - **Sumer Mann**
-- **Khalid Mahmoud**
+- **Khalid Mahmoud(Instructor)**
 
 The group designed the store, its categories and products, the database schema and the original
 JSP site, built over four lab assignments (see the [project report](docs/COSC304-Report.pdf)). This

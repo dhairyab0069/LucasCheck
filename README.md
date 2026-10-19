@@ -60,9 +60,10 @@ Open the [live demo](https://lucascheck.vercel.app) and log in with one of the s
 | `beth` | `test` | Shop; has one past order |
 | `candace`, `darren` | `password`, `pw` | Shop |
 
-Unless a database is connected (see [below](#deploying-to-vercel)), the demo runs on an in-memory
-database that starts fresh each time the server does, so feel free to place and ship as many orders
-as you like.
+Without a database connected, the demo runs on an in-memory database that starts fresh each time
+the server does. That's fine on one machine, but Vercel runs several copies of the server, each with
+its own copy, so on Vercel a new order can seem to vanish. Connect a Postgres
+([below](#deploying-to-vercel)) for orders that stick.
 
 ## Screenshots
 
@@ -99,9 +100,9 @@ first set up for the old static/JSP version builds correctly too.
    | Name | Needed | Value |
    |---|---|---|
    | `SESSION_SECRET` | Yes, for production | Any long random string: `openssl rand -base64 32` |
-   | `DATABASE_URL` | No | A Postgres connection string. Leave it out to keep the self-resetting demo database. |
+   | `DATABASE_URL` | Recommended | A Postgres connection string. Without it each server instance keeps its own self-resetting demo database. |
 
-3. **Optional, for orders that persist:** add a Postgres database from the Vercel Marketplace
+3. **Recommended, so orders stay put:** add a Postgres database from the Vercel Marketplace
    (Neon has a free plan), which sets `DATABASE_URL` for you. The tables and sample data are created
    on the first request, or run `npm run db:setup` yourself.
 4. Redeploy.

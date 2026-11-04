@@ -99,7 +99,7 @@ first set up for the old static/JSP version builds correctly too.
 
    | Name | Needed | Value |
    |---|---|---|
-   | `SESSION_SECRET` | Yes, for production | Any long random string: `openssl rand -base64 32` |
+   | `SESSION_SECRET` | Yes, for production | Any long random string: `openssl rand -base64 32`. If it is missing the app still starts, but signs logins with a public built-in key (anyone could forge one) and logs a warning. |
    | `DATABASE_URL` | Recommended | A Postgres connection string. Without it each server instance keeps its own self-resetting demo database. |
 
 3. **Recommended, so orders stay put:** add a Postgres database from the Vercel Marketplace
@@ -109,21 +109,35 @@ first set up for the old static/JSP version builds correctly too.
 
 ## Running locally
 
-Requires Node.js 20.9 or later.
+Requires Node.js 20.9 or later to run the site (`npm run db:setup` needs 22.9 or later).
 
 ```bash
 npm install
 npm run dev          # http://localhost:3000, on the in-memory demo database
 ```
 
-To use a real Postgres, copy `.env.example` to `.env.local` and fill in `DATABASE_URL`, then:
+Environment variables (see `.env.example`; put them in `.env.local`, which git ignores):
+
+| Name | Needed | Meaning |
+|---|---|---|
+| `DATABASE_URL` | No | Postgres connection string. Unset: the in-memory PGlite demo database. |
+| `SESSION_SECRET` | In production | Signs the login cookie. Unset: an insecure built-in key is used. |
+
+To use a real Postgres, fill in `DATABASE_URL`, then:
 
 ```bash
 npm run db:setup              # create the tables and sample data (if missing)
 npm run db:setup -- --reset   # drop everything and start over
 ```
 
-Checks: `npm run lint`, `npm run typecheck`, `npm run build`.
+Checks (the same ones CI runs on every push and pull request, in `.github/workflows/ci.yml`):
+
+```bash
+npm run lint
+npm run typecheck
+npm test             # Vitest: runs src/lib/store.ts's queries on a seeded in-memory database
+npm run build        # downloads the Inter and Dancing Script fonts, so it needs network
+```
 
 ## Project layout
 
@@ -136,6 +150,8 @@ Checks: `npm run lint`, `npm run typecheck`, `npm run build`.
 | `src/lib/store.ts` | Every query: products, cart pricing, customers, orders, sales, placing and shipping orders. |
 | `src/lib/session.ts`, `cart.ts` | The login cookie and the cart cookie. |
 | `scripts/db-setup.ts` | `npm run db:setup`. |
+| `tests/` | Vitest tests of the store queries: search, cart pricing, placing orders, shipping and its stock guard. |
+| `.github/workflows/ci.yml` | Lint, type check, tests and build on every push and pull request. |
 | `public/img/` | Product photos. |
 | `docs/` | Screenshots, the original course report and marking guide, and the original SQL Server script (`legacy-orderdb-sqlserver.ddl`). |
 

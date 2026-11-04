@@ -3,7 +3,7 @@
 // - DATABASE_URL unset → PGlite, an in-memory Postgres compiled to WASM, seeded
 //   on first use. Zero setup for previews; data resets on every cold start.
 import "server-only";
-import { DROP_SQL, SCHEMA_SQL, seed } from "./schema";
+import { SCHEMA_SQL, seed } from "./schema";
 
 export interface Queryable {
   query<T = Record<string, unknown>>(sql: string, params?: unknown[]): Promise<{ rows: T[] }>;
@@ -58,12 +58,11 @@ async function createDriver(): Promise<Driver> {
 }
 
 /** Creates the tables and demo data if the database is empty. */
-export async function setupDatabase(driver: Driver, { reset = false } = {}) {
-  if (reset) await driver.exec(DROP_SQL);
+async function setupDatabase(driver: Driver) {
   const { rows } = await driver.query<{ exists: string | null }>(
     "SELECT to_regclass('public.product')::text AS exists",
   );
-  if (rows[0]?.exists && !reset) return;
+  if (rows[0]?.exists) return;
   await driver.exec(SCHEMA_SQL);
   await driver.transaction((tx) => seed(tx));
   console.info(`[db] created schema and demo data (${isDemoDatabase ? "PGlite" : "Postgres"})`);
